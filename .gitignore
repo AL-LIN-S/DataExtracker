@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+build/
+dist/
+*.egg-info/
+
+# Virtual environments and local dependency mirrors
+.venv/
+venv/
+env/
+local_python_libs/
+third_party_wheels/
+local_tesseract/
+local_tesseract_installer/
+
+# Runtime outputs
+outputs/
+*.log
+extracted.csv
+batch_summary.csv
+batch_summary.txt
+*_overlay.png
+*_side_by_side.png
+*_color_fit.png
+*_metrics.csv
+
+# Local input documents and private report images
+*.docx
+*.jpeg
+*.jpg
+*.png
+*.bmp
+*.tif
+*.tiff
+!docs/**/*.png
+!docs/**/*.jpg
+!tests/fixtures/**
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

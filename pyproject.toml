@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "curve-extractor"
+version = "0.1.0"
+description = "Extract numeric data from colored engineering plot images and DOCX reports"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+]
+dependencies = [
+    "numpy>=1.26",
+    "pandas>=2.0",
+    "Pillow>=10.0",
+    "opencv-python>=4.8",
+    "pytesseract>=0.3.13",
+    "PySide6>=6.6",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+]
+
+[project.scripts]
+curve-extractor = "curve_extractor.app.main_window:run"
+curve-extractor-cli = "curve_extractor.cli:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

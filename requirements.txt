@@ -1,0 +1,6 @@
+numpy>=1.26
+pandas>=2.0
+Pillow>=10.0
+opencv-python>=4.8
+pytesseract>=0.3.13
+PySide6>=6.6
