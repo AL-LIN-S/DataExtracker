@@ -51,6 +51,28 @@ Install the Tesseract executable separately and put it on `PATH`, or set `TESSER
 | macOS | `brew install tesseract` |
 | Linux | `sudo apt install tesseract-ocr` (or your distro equivalent) |
 
+
+## First success on Windows
+
+If auto axis detection fails, it is usually Tesseract. Use this path:
+
+![Windows first run](docs/images/04_windows_first_run.png)
+
+1. Install Python 3.10+.
+2. Install [Tesseract for Windows](https://github.com/UB-Mannheim/tesseract/wiki) and add `tesseract.exe` to `PATH` **or** set:
+
+```powershell
+$env:TESSERACT_CMD = "C:\Program Files\Tesseract-OCR\tesseract.exe"
+```
+
+3. `python -m pip install -e .`
+4. Open the GUI (`python -m curve_extractor`) and calibrate the plot area manually if OCR misses ticks — you can still extract after manual axis setup.
+5. Or run the sample: `python -m curve_extractor.cli examples/sample_rgb_plot.png --output extracted.csv`
+
+Demo flow (input → overlay → side-by-side):
+
+![Demo flow](docs/images/demo_flow.gif)
+
 ## Screenshots
 
 | Input | Overlay preview |
