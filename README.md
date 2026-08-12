@@ -1,66 +1,102 @@
 # Curve Extractor
 
-Curve Extractor is a local Python tool for extracting numeric data from colored engineering plots. It supports both an interactive desktop workflow and a command-line workflow for single images or DOCX files that contain multiple plot images.
+[English](README.md) | [中文](README.zh-CN.md)
 
-The project is designed for white-background plots with colored red, green, and blue curves, black or gray grid lines, linear axes, and optional text statements or table images that can be used as validation hints.
+**Digitize colored engineering plots to CSV** — CLI + PySide6 GUI, with automatic overlay verification.
+
+Built for white-background plots with saturated red / green / blue curves, black or gray grids, and linear axes. Optional statement or table images in a DOCX can be used as validation hints.
+
+![Input plot → overlay preview](docs/images/03_side_by_side.png)
+
+## Why this tool
+
+Compared with typical plot digitizers, Curve Extractor focuses on:
+
+- **Colored multi-curve** extraction (R/G/B candidates + binding)
+- **Multiple Y-axes** with automatic or manual series binding
+- **DOCX batch** mode (`Pic n` / `Statement n` layout)
+- **Review artifacts** every run: overlay, side-by-side redraw, color-fit check, metrics
+
+## Try in 30 seconds
+
+Python 3.10+ required. From the repo root:
+
+```bash
+python -m venv .venv
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+# macOS / Linux:
+source .venv/bin/activate
+
+python -m pip install -U pip
+python -m pip install -e .
+python -m curve_extractor.cli examples/sample_rgb_plot.png --output extracted.csv
+```
+
+You should get a wide CSV (`x`, then one column per series). For DOCX batch mode, pass a `.docx` and `--output-dir`.
+
+**GUI:**
+
+```bash
+python -m curve_extractor
+# or: curve-extractor
+```
+
+### Tesseract (for automatic axis OCR)
+
+Install the Tesseract executable separately and put it on `PATH`, or set `TESSERACT_CMD`.
+
+| OS | Typical install |
+|---|---|
+| Windows | [UB Mannheim installer](https://github.com/UB-Mannheim/tesseract/wiki) then `$env:TESSERACT_CMD = "C:\Program Files\Tesseract-OCR\tesseract.exe"` |
+| macOS | `brew install tesseract` |
+| Linux | `sudo apt install tesseract-ocr` (or your distro equivalent) |
+
+## Screenshots
+
+| Input | Overlay preview |
+|---|---|
+| ![input](docs/images/01_input_plot.png) | ![overlay](docs/images/02_overlay_preview.png) |
+
+Synthetic demo images live under [`examples/`](examples/) (safe sample data, no private reports).
 
 ## Features
 
-- Detects the plot area and axis tick labels with OCR.
-- Finds saturated colored curve candidates inside the plot area.
-- Extracts one value per x-pixel column and exports a wide CSV table.
-- Supports multiple y-axes and automatic red, green, and blue series binding.
-- Generates review artifacts for each extraction:
-  - overlay image
-  - side-by-side redrawn comparison
-  - color-fit check image
-  - per-series fit metrics
-- Reads DOCX files organized as `Pic n` and `Statement n`.
-- Treats table images inside a DOCX as statement/validation input instead of curve plots.
-- Provides a PySide6 desktop GUI for manual calibration and review.
+- Detects the plot area and axis tick labels with OCR
+- Finds saturated colored curve candidates inside the plot area
+- Extracts one value per x-pixel column and exports a wide CSV
+- Supports multiple y-axes and automatic red / green / blue series binding
+- Review artifacts: overlay, side-by-side, color-fit image, per-series metrics
+- DOCX batch: `Pic n` + `Statement n`; table-like images treated as statement/validation input
+- PySide6 desktop GUI for manual calibration and review
 
-## Installation
+## Command-line usage
 
-Python 3.10 or newer is required.
+Console script (after install): `curve-extractor-cli`  
+Module form: `python -m curve_extractor.cli`
 
-```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install -U pip
-python -m pip install -r requirements-dev.txt
+Single image:
+
+```bash
+python -m curve_extractor.cli path/to/plot.png --output extracted.csv
 ```
 
-Automatic axis detection depends on the Tesseract OCR executable. Install Tesseract separately and make sure `tesseract` is available on `PATH`, or set `TESSERACT_CMD` to the executable path.
+Explicit series binding when auto-bind is wrong:
 
-Example on Windows:
-
-```powershell
-$env:TESSERACT_CMD = "C:\Program Files\Tesseract-OCR\tesseract.exe"
-```
-
-## Command-Line Usage
-
-Extract a single image:
-
-```powershell
-python -m curve_extractor.cli path\to\plot.png --output extracted.csv
-```
-
-If automatic color and y-axis binding is not suitable, pass explicit series bindings:
-
-```powershell
-python -m curve_extractor.cli path\to\plot.png `
-  --output extracted.csv `
+```bash
+python -m curve_extractor.cli path/to/plot.png \
+  --output extracted.csv \
   --series "power:MW:0,235,0:45:right_1"
 ```
 
-Batch extract from a DOCX file:
+`--series` format: `NAME:UNIT:R,G,B:TOLERANCE:Y_AXIS`
 
-```powershell
-python -m curve_extractor.cli path\to\summary.docx --output-dir outputs
+DOCX batch:
+
+```bash
+python -m curve_extractor.cli path/to/summary.docx --output-dir outputs
 ```
 
-The DOCX batch mode expects a simple structure:
+Expected DOCX shape:
 
 ```text
 Pic 1:
@@ -75,74 +111,61 @@ Statement 2:
 [optional validation text]
 ```
 
-If a `Pic` section contains more than one plot image, outputs are named with suffixes such as `pic_003_01.csv` and `pic_003_02.csv`. Table-like images are OCR-processed and appended to the statement hints for validation.
+## GUI workflow
 
-## GUI Usage
+1. Open an image  
+2. Run automatic axis detection, or select the plot area manually  
+3. Review or edit x/y axis ranges  
+4. Detect curve colors  
+5. Bind series to y-axes  
+6. Extract and preview the overlay  
+7. Add exclusion rectangles if needed  
+8. Export CSV  
 
-Start the desktop application:
+## Output files
 
-```powershell
-python -m curve_extractor
-```
+Single-image mode writes the requested CSV.
 
-Typical workflow:
+DOCX batch mode writes under the output directory:
 
-1. Open an image.
-2. Run automatic axis detection, or manually select the plot area.
-3. Review or edit x/y axis ranges.
-4. Detect curve colors.
-5. Bind series to y-axes.
-6. Extract and preview the overlay.
-7. Add exclusion rectangles if needed.
-8. Export CSV.
+- `pic_001.csv`, `pic_001_overlay.png`, `pic_001_side_by_side.png`, `pic_001_color_fit.png`, `pic_001_metrics.csv`
+- `batch_summary.csv` / `batch_summary.txt`
 
-## Output Files
-
-Single-image mode writes the requested CSV file.
-
-DOCX batch mode writes files under the selected output directory:
-
-- `pic_001.csv`
-- `pic_001_overlay.png`
-- `pic_001_side_by_side.png`
-- `pic_001_color_fit.png`
-- `pic_001_metrics.csv`
-- `batch_summary.csv`
-- `batch_summary.txt`
-
-CSV output uses a wide format:
-
-```text
-x,frequency_Hz,power_MW,needle_%
-...
-```
-
-Missing values are left blank.
+CSV is wide-format (`x,frequency_Hz,power_MW,...`); missing values are blank.
 
 ## Testing
 
-```powershell
+```bash
+python -m pip install -e ".[dev]"
 python -m pytest -q
 python -m compileall curve_extractor tests
 ```
 
-## Project Layout
+## Project layout
 
 ```text
 curve_extractor/
-  app/                 PySide6 GUI
-  core/                calibration, OCR, color detection, extraction, DOCX batch processing
-  cli.py               command-line entry point
-tests/                 unit and integration tests
+  app/       PySide6 GUI
+  core/      calibration, OCR, color detection, extraction, DOCX batch
+  cli.py     command-line entry point
+examples/    sample plots (synthetic)
+docs/images/ README figures
+tests/
 ```
 
-## Privacy and Data
+Package name on PyPI-style metadata: `curve-extractor` (see `pyproject.toml`). Entry points: `curve-extractor` (GUI), `curve-extractor-cli` (CLI).
 
-This repository does not include private input images, DOCX reports, generated extraction outputs, local OCR binaries, or local dependency mirrors. Keep project-specific documents and generated results outside version control.
+## Privacy
+
+This repository does not include private input images, DOCX reports, generated extraction outputs, local OCR binaries, or local dependency mirrors. Keep project-specific documents and results outside version control.
 
 ## Limitations
 
-- Linear axes only.
-- Best suited to white-background engineering plots.
-- OCR quality depends on image resolution and the installed Tesseract model.
-- Automatic red/green/blue binding is heuristic and should be reviewed with the generated comparison images.
+- Linear axes only
+- Best on white-background engineering plots
+- OCR quality depends on resolution and the installed Tesseract model
+- Automatic R/G/B binding is heuristic — always review comparison images
+
+## License
+
+MIT
