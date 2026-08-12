@@ -43,6 +43,28 @@ python -m curve_extractor
 | macOS | `brew install tesseract` |
 | Linux | `sudo apt install tesseract-ocr` |
 
+
+## Windows 第一次跑通
+
+自动识别坐标轴失败，多半是 Tesseract 没装好。按这个最短路径来：
+
+![Windows 第一次跑通](docs/images/04_windows_first_run.png)
+
+1. 安装 Python 3.10+  
+2. 安装 [Windows 版 Tesseract](https://github.com/UB-Mannheim/tesseract/wiki)，把 `tesseract.exe` 加进 `PATH`，或设置：
+
+```powershell
+$env:TESSERACT_CMD = "C:\Program Files\Tesseract-OCR\tesseract.exe"
+```
+
+3. `python -m pip install -e .`  
+4. 打开 GUI：`python -m curve_extractor`。OCR 不准时，可手动框选图区、改坐标范围，照样能提取。  
+5. 或跑样例：`python -m curve_extractor.cli examples/sample_rgb_plot.png --output extracted.csv`
+
+演示动图（原图 → 叠图 → 并排复核）：
+
+![演示流程](docs/images/demo_flow.gif)
+
 ## 截图
 
 | 原图 | 叠图预览 |
