@@ -2,22 +2,24 @@
 
 [English](README.md) | [中文](README.zh-CN.md)
 
-**Digitize colored engineering plots to CSV** — CLI + PySide6 GUI, with automatic overlay verification.
+The plot is in a scan. The numbers are not. Clicking through a web digitizer for the fifth time this week is not a workflow.
 
-Built for white-background plots with saturated red / green / blue curves, black or gray grids, and linear axes. Optional statement or table images in a DOCX can be used as validation hints.
+**Curve Extractor** turns colored engineering plots into a wide CSV — locally, from the CLI or a PySide6 GUI. Every run writes an overlay, so you can see whether the traces actually landed.
 
-![Input plot → overlay preview](docs/images/03_side_by_side.png)
+![From plot to CSV](docs/images/demo_flow.gif)
 
-## Why this tool
+## Why it exists
 
-Compared with typical plot digitizers, Curve Extractor focuses on:
+Engineering reports still ship curves as pictures. You need the series, not another screenshot. Generic digitizers are fine for one trace, once. This tool is built for the pile: white-background R/G/B plots, black or gray grids, linear axes, extra Y-axes, and the occasional DOCX of `Pic n` / `Statement n` pages.
 
 - **Colored multi-curve** extraction (R/G/B candidates + binding)
-- **Multiple Y-axes** with automatic or manual series binding
-- **DOCX batch** mode (`Pic n` / `Statement n` layout)
+- **Multiple Y-axes**, automatic or manual series binding
+- **DOCX batch** (`Pic n` / `Statement n` layout)
 - **Review artifacts** every run: overlay, side-by-side redraw, color-fit check, metrics
 
-## Try in 30 seconds
+Optional statement or table images in a DOCX can be used as validation hints.
+
+## Try it
 
 Python 3.10+ required. From the repo root:
 
@@ -41,6 +43,8 @@ python -m curve_extractor
 # or: curve-extractor
 ```
 
+After install, the CLI entry point is `curve-extractor-cli`.
+
 ### Tesseract (for automatic axis OCR)
 
 Install the Tesseract executable separately and put it on `PATH`, or set `TESSERACT_CMD`.
@@ -50,7 +54,6 @@ Install the Tesseract executable separately and put it on `PATH`, or set `TESSER
 | Windows | [UB Mannheim installer](https://github.com/UB-Mannheim/tesseract/wiki) then `$env:TESSERACT_CMD = "C:\Program Files\Tesseract-OCR\tesseract.exe"` |
 | macOS | `brew install tesseract` |
 | Linux | `sudo apt install tesseract-ocr` (or your distro equivalent) |
-
 
 ## First success on Windows
 
@@ -68,10 +71,6 @@ $env:TESSERACT_CMD = "C:\Program Files\Tesseract-OCR\tesseract.exe"
 3. `python -m pip install -e .`
 4. Open the GUI (`python -m curve_extractor`) and calibrate the plot area manually if OCR misses ticks — you can still extract after manual axis setup.
 5. Or run the sample: `python -m curve_extractor.cli examples/sample_rgb_plot.png --output extracted.csv`
-
-Demo flow (input → overlay → side-by-side):
-
-![Demo flow](docs/images/demo_flow.gif)
 
 ## Screenshots
 
@@ -93,7 +92,7 @@ Synthetic demo images live under [`examples/`](examples/) (safe sample data, no 
 
 ## Command-line usage
 
-Console script (after install): `curve-extractor-cli`  
+Console script (after install): `curve-extractor-cli`
 Module form: `python -m curve_extractor.cli`
 
 Single image:
@@ -135,14 +134,14 @@ Statement 2:
 
 ## GUI workflow
 
-1. Open an image  
-2. Run automatic axis detection, or select the plot area manually  
-3. Review or edit x/y axis ranges  
-4. Detect curve colors  
-5. Bind series to y-axes  
-6. Extract and preview the overlay  
-7. Add exclusion rectangles if needed  
-8. Export CSV  
+1. Open an image
+2. Run automatic axis detection, or select the plot area manually
+3. Review or edit x/y axis ranges
+4. Detect curve colors
+5. Bind series to y-axes
+6. Extract and preview the overlay
+7. Add exclusion rectangles if needed
+8. Export CSV
 
 ## Output files
 
