@@ -1,27 +1,84 @@
-# Curve Extractor
+<p align="center">
+  <img src="docs/images/hero-xhs.png" alt="没有原始数据 / 只有一张图 / 5 步导成 CSV" width="920">
+</p>
 
-[English](README.md) | [中文](README.zh-CN.md)
+<p align="center">
+  <code>本地</code>&nbsp;·&nbsp;<code>开源</code>&nbsp;·&nbsp;<code>不上传</code>&nbsp;·&nbsp;<code>MIT</code>
+  <br><br>
+  <a href="README.md#english">English</a> · <a href="#中文">中文</a>
+  <br><br>
+  <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-yellow">
+  <img alt="Python 3.10+" src="https://img.shields.io/badge/python-3.10%2B-blue">
+  <img alt="curve-extractor 0.1.0" src="https://img.shields.io/badge/curve--extractor-0.1.0-informational">
+</p>
 
-图在扫描件里，数不在。一周第五次对着网页描点，那不叫工作流。
+<a id="中文"></a>
 
-**Curve Extractor** 把彩色工程曲线图提取成宽表 CSV——本地跑，命令行或 PySide6 桌面都行。每次提取都写出叠图，对得上对不上，一眼能看出来。
+# 没有原始数据。只有一张图。5 步导成 CSV。
+
+想对比文献里那条曲线，文章却只给了图。网页描点，一条线做一次还行——同一周第五次对着图点，那不叫工作流。
+
+这页把扫描件 / 截图里的**彩色工程曲线**，在自己电脑上提成宽表 CSV。包名 `curve-extractor` 0.1.0。图不上传。不准 100%。GitHub 封面页是 [README.md](README.md)。
 
 ![从曲线图到 CSV](docs/images/demo_flow.gif)
 
-## 为什么做这个
+---
 
-试验报告里的曲线经常只是图。你要的是数列，不是又一张截图。通用描点工具适合一条线、做一次。这个工具冲着那堆图去的：白底红/绿/蓝曲线、黑灰网格、线性坐标、多 Y 轴，以及 `Pic n` / `Statement n` 排版的 DOCX。
+## 5 步
 
-- **彩色多曲线**自动候选与绑定
-- **多 Y 轴**（自动或手动）
-- **DOCX 批量**（`Pic n` / `Statement n`）
-- 每次导出都带 **overlay / 并排重绘 / 色拟合检查**，方便人工核对
+| ① 选图 | ⑤ 叠图复核 | 并排对照 |
+|:---:|:---:|:---:|
+| ![原图](docs/images/01_input_plot.png) | ![叠图](docs/images/02_overlay_preview.png) | ![并排](docs/images/03_side_by_side.png) |
 
-DOCX 里的说明文字或表格图也可作为校验提示。
+### ① 选图
 
-## 先跑通一次
+白底、彩色曲线、线性坐标最稳。深色底、灰度扫描件、对数轴先别硬上。用 [`examples/`](examples/) 里的合成样例练手即可，自己的项目图别往外传。
 
-需要 Python 3.10+。在仓库根目录：
+适合的图：白底红 / 绿 / 蓝曲线、黑灰网格、线性坐标、偶尔多 Y 轴。仓库不含私有报告图。
+
+### ② 定两轴各两点
+
+X、Y 各落到两个已知刻度，把像素换成真实坐标。轴刻度可以自动读——**Tesseract 只认刻度数字，不是「AI 识曲线」**。读不准就手动框图区，手填 x/y 范围，照样能往下走。
+
+Windows 上轴 OCR 失败，多半是 Tesseract 没进 `PATH`：
+
+![Windows 第一次跑通](docs/images/04_windows_first_run.png)
+
+### ③ 识别颜色
+
+曲线按饱和彩色像素提，不是按鼠标一条条描。红 / 绿 / 蓝可以一起做。自动绑色是启发式的，绑错了看叠图，别装没看见。多 Y 轴可以自动或手动绑定。
+
+### ④ 导出 CSV
+
+宽表，一列一条曲线（`x`，后面每一列一条）。能进 Excel，也能给 Python。缺测留空。形如：
+
+```text
+x,frequency_Hz,power_MW,needle_%
+```
+
+单图 CLI **只写出你指定的 CSV**。叠图复核走 **GUI**；DOCX 批量每张会另写 overlay / 并排图 / 色拟合 / metrics。
+
+### ⑤ 叠图复核
+
+把提取结果叠回原图。重合再往下用；飞了就改图区、改范围、改颜色，再导一次。没有叠图核对的数，不要丢进论文。
+
+---
+
+## 会翻车（先看再装）
+
+> **线性轴 only。** 对数轴不做。  
+> **白底彩线最稳。** 深色底、灰度扫描、同色缠绕会翻车。  
+> **Tesseract = 轴刻度 OCR**，不是 AI 识曲线。OCR 效果依赖清晰度和已装的 Tesseract 模型。  
+> **不准 100%。** 像素量化、轴标定、绑色都会有误差。只信叠回去重合的结果。  
+> 自动红 / 绿 / 蓝绑定是启发式的，务必看复核图。
+
+不是网页版，没有在线地址。本地跑，MIT。
+
+---
+
+## 30 秒试跑
+
+需要 Python 3.10+。轴自动识别另装 Tesseract。在仓库根目录：
 
 ```bash
 python -m venv .venv
@@ -31,35 +88,19 @@ python -m pip install -e .
 python -m curve_extractor.cli examples/sample_rgb_plot.png --output extracted.csv
 ```
 
-会得到一张宽表 CSV（`x`，后面每一列一条曲线）。DOCX 批量模式传入 `.docx` 和 `--output-dir`。
-
-**打开 GUI：**
+打开 GUI：
 
 ```bash
 python -m curve_extractor
 # 或：curve-extractor
 ```
 
-安装后命令行入口是 `curve-extractor-cli`。
+安装后命令行入口是 `curve-extractor-cli`。模块形式始终可用：`python -m curve_extractor.cli`。
 
-### 安装 Tesseract（自动识别坐标轴）
+### Windows：Tesseract PATH
 
-需要单独安装 Tesseract，并保证在 `PATH` 里，或设置环境变量 `TESSERACT_CMD`。
-
-| 系统 | 常见装法 |
-|---|---|
-| Windows | [安装包](https://github.com/UB-Mannheim/tesseract/wiki)，然后 `$env:TESSERACT_CMD = "C:\Program Files\Tesseract-OCR\tesseract.exe"` |
-| macOS | `brew install tesseract` |
-| Linux | `sudo apt install tesseract-ocr` |
-
-## Windows 第一次跑通
-
-自动识别坐标轴失败，多半是 Tesseract 没装好。按这个最短路径来：
-
-![Windows 第一次跑通](docs/images/04_windows_first_run.png)
-
-1. 安装 Python 3.10+
-2. 安装 [Windows 版 Tesseract](https://github.com/UB-Mannheim/tesseract/wiki)，把 `tesseract.exe` 加进 `PATH`，或设置：
+1. 安装 Python 3.10+。
+2. 安装 [Windows 版 Tesseract](https://github.com/UB-Mannheim/tesseract/wiki)，把 `tesseract.exe` 加进 `PATH`，或：
 
 ```powershell
 $env:TESSERACT_CMD = "C:\Program Files\Tesseract-OCR\tesseract.exe"
@@ -69,34 +110,24 @@ $env:TESSERACT_CMD = "C:\Program Files\Tesseract-OCR\tesseract.exe"
 4. 打开 GUI：`python -m curve_extractor`。OCR 不准时，可手动框选图区、改坐标范围，照样能提取。
 5. 或跑样例：`python -m curve_extractor.cli examples/sample_rgb_plot.png --output extracted.csv`
 
-## 截图
-
-| 原图 | 叠图预览 |
+| 系统 | Tesseract |
 |---|---|
-| ![input](docs/images/01_input_plot.png) | ![overlay](docs/images/02_overlay_preview.png) |
+| Windows | [UB Mannheim 安装包](https://github.com/UB-Mannheim/tesseract/wiki) + `PATH` 或 `TESSERACT_CMD` |
+| macOS | `brew install tesseract` |
+| Linux | `sudo apt install tesseract-ocr` |
 
-样例图在 [`examples/`](examples/)（合成数据，不含私有报告）。
+---
 
-## 功能
+## GUI 和 CLI
 
-- OCR 检测图区和坐标刻度
-- 在图区内找饱和彩色曲线候选
-- 每个 x 像素列取一个值，导出宽表 CSV
-- 多 Y 轴，自动绑定红 / 绿 / 蓝系列
-- 复核产物：叠图、并排重绘、色拟合图、分系列指标
-- DOCX 批量：`Pic n` + `Statement n`；表格类图片当作说明/校验输入
-- PySide6 桌面 GUI，可手动标定和复核
+| | GUI | 单图 CLI | DOCX 批量 |
+|---|---|---|---|
+| 入口 | `python -m curve_extractor` | `python -m curve_extractor.cli 图.png --output extracted.csv` | `python -m curve_extractor.cli 报告.docx --output-dir outputs` |
+| 定轴 | 自动 OCR，或手动框图 / 改范围 | 自动 OCR | 自动 OCR |
+| 导出 | CSV + **叠图预览** | **指定的 CSV** | 每张 `pic_NNN.csv` + overlay / 并排 / 色拟合 / metrics |
+| 适合 | 要复核、要手改 | 一张图、命令行 | `Pic n` / `Statement n` 那一摞 |
 
-## 常用命令
-
-安装后入口：`curve-extractor`（GUI）、`curve-extractor-cli`（CLI）。
-模块形式：`python -m curve_extractor.cli`
-
-单图：
-
-```bash
-python -m curve_extractor.cli 路径/图.png --output extracted.csv
-```
+### 常用命令
 
 自动绑定不对时，手动指定曲线：
 
@@ -129,7 +160,9 @@ Statement 2:
 [可选校验文字]
 ```
 
-## GUI 流程
+表格类图片当作说明 / 校验输入，不当曲线图。DOCX 里的说明文字或表格图也可作为校验提示。
+
+### GUI 逐步
 
 1. 打开图片
 2. 自动识别坐标轴，或手动框选图区
@@ -140,6 +173,8 @@ Statement 2:
 7. 需要时加排除矩形
 8. 导出 CSV
 
+---
+
 ## 输出文件
 
 单图模式写出指定的 CSV。
@@ -149,7 +184,9 @@ DOCX 批量会在输出目录写下：
 - `pic_001.csv`、`pic_001_overlay.png`、`pic_001_side_by_side.png`、`pic_001_color_fit.png`、`pic_001_metrics.csv`
 - `batch_summary.csv` / `batch_summary.txt`
 
-CSV 是宽表（`x,frequency_Hz,power_MW,...`）；缺测留空。
+CSV 是宽表；缺测留空。
+
+---
 
 ## 测试
 
@@ -158,6 +195,8 @@ python -m pip install -e ".[dev]"
 python -m pytest -q
 python -m compileall curve_extractor tests
 ```
+
+---
 
 ## 项目结构
 
@@ -171,11 +210,13 @@ docs/images/ README 配图
 tests/
 ```
 
-包名（`pyproject.toml`）：`curve-extractor`。入口：`curve-extractor`（GUI）、`curve-extractor-cli`（CLI）。
+包名（`pyproject.toml`）：`curve-extractor` 0.1.0。入口：`curve-extractor`（GUI）、`curve-extractor-cli`（CLI）。
 
-## 隐私与限制
+---
 
-仓库不含私有报告图、DOCX、提取结果、本地 OCR 或依赖镜像。仅支持线性坐标；OCR 效果依赖清晰度和 Tesseract 模型；自动红绿蓝绑定是启发式的，请务必看复核图。
+## 隐私
+
+仓库不含私有报告图、DOCX、提取结果、本地 OCR 或依赖镜像。项目文件和结果请放在版本库外面。
 
 ## 许可证
 
