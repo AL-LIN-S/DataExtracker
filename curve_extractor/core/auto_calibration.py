@@ -142,6 +142,22 @@ def auto_calibrate_from_ocr(
     )
 
 
+TESSERACT_MISSING_BANNER = (
+    "未检测到 Tesseract，轴刻度自动识别现在不可用（不会假装已经 OCR）。"
+    "请安装 Tesseract OCR，把 tesseract.exe 加入 PATH，或设置环境变量 TESSERACT_CMD "
+    r"（常见路径：C:\Program Files\Tesseract-OCR\tesseract.exe）。"
+    "Tesseract 只读轴上的数字，不是「AI 识曲线」，也不包含在本程序里。"
+    "仍可手动点选图区、填写 X/Y 范围后提取。"
+)
+
+
+def first_run_tesseract_banner() -> str | None:
+    """Return GUI first-run copy when Tesseract is missing; None if a binary was found."""
+    if resolve_tesseract_command():
+        return None
+    return TESSERACT_MISSING_BANNER
+
+
 def run_tesseract_ocr(image_rgb: np.ndarray) -> list[OCRText]:
     """Run Tesseract OCR when both pytesseract and the tesseract binary are installed."""
     try:
@@ -153,7 +169,7 @@ def run_tesseract_ocr(image_rgb: np.ndarray) -> list[OCRText]:
             "Install the Python package and the Tesseract executable first."
         ) from exc
 
-    tesseract_cmd = _resolve_tesseract_command()
+    tesseract_cmd = resolve_tesseract_command()
     if tesseract_cmd:
         pytesseract.pytesseract.tesseract_cmd = tesseract_cmd
 
@@ -174,8 +190,9 @@ def run_tesseract_ocr(image_rgb: np.ndarray) -> list[OCRText]:
                 texts.extend(_run_tesseract_region(pytesseract, crop, origin=origin, psm=psm))
     except pytesseract.TesseractNotFoundError as exc:
         raise RuntimeError(
-            "Tesseract executable was not found. Install Tesseract OCR and ensure "
-            "the tesseract command is available on PATH."
+            "Tesseract executable was not found. Install Tesseract OCR and add "
+            "tesseract.exe to PATH, or set TESSERACT_CMD to that executable. "
+            "Axis OCR is optional; you can still calibrate the plot box and ranges by hand."
         ) from exc
     return _deduplicate_ocr_texts(texts)
 
@@ -205,15 +222,41 @@ def _run_tesseract_region(pytesseract, image, *, origin: tuple[int, int], psm: i
     return texts
 
 
-def _resolve_tesseract_command() -> str | None:
-    candidates = [
+def resolve_tesseract_command() -> str | None:
+    """Return a usable Tesseract executable path, or None if it is not installed."""
+    candidates: list[str | None] = [
         os.environ.get("TESSERACT_CMD"),
         shutil.which("tesseract"),
+        shutil.which("tesseract.exe"),
     ]
+    if os.name == "nt":
+        program_files = os.environ.get("ProgramFiles", r"C:\Program Files")
+        program_files_x86 = os.environ.get("ProgramFiles(x86)", r"C:\Program Files (x86)")
+        local_app = os.environ.get("LOCALAPPDATA", "")
+        candidates.extend(
+            [
+                str(Path(program_files) / "Tesseract-OCR" / "tesseract.exe"),
+                str(Path(program_files_x86) / "Tesseract-OCR" / "tesseract.exe"),
+            ]
+        )
+        if local_app:
+            candidates.append(str(Path(local_app) / "Programs" / "Tesseract-OCR" / "tesseract.exe"))
+    seen: set[str] = set()
     for candidate in candidates:
-        if candidate and Path(candidate).exists():
-            return candidate
+        if not candidate:
+            continue
+        path = Path(candidate.strip().strip('"'))
+        key = str(path).lower()
+        if key in seen:
+            continue
+        seen.add(key)
+        if path.is_file():
+            return str(path)
     return None
+
+
+def _resolve_tesseract_command() -> str | None:
+    return resolve_tesseract_command()
 
 
 def _parse_number(text: str) -> float | None:

@@ -9,7 +9,7 @@
   <br><br>
   <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-yellow">
   <img alt="Python 3.10+" src="https://img.shields.io/badge/python-3.10%2B-blue">
-  <img alt="curve-extractor 0.1.0" src="https://img.shields.io/badge/curve--extractor-0.1.0-informational">
+  <img alt="curve-extractor 0.2.0" src="https://img.shields.io/badge/curve--extractor-0.2.0-informational">
 </p>
 
 <a id="中文"></a>
@@ -18,7 +18,7 @@
 
 想对比文献里那条曲线，文章却只给了图。网页描点，一条线做一次还行——同一周第五次对着图点，那不叫工作流。
 
-这页把扫描件 / 截图里的**彩色工程曲线**，在自己电脑上提成宽表 CSV。包名 `curve-extractor` 0.1.0。图不上传。不准 100%。GitHub 封面页是 [README.md](README.md)。
+这页把扫描件 / 截图里的**彩色工程曲线**，在自己电脑上提成宽表 CSV。包名 `curve-extractor` 0.2.0。图不上传。不准 100%。GitHub 封面页是 [README.md](README.md)。
 
 ![从曲线图到 CSV](docs/images/demo_flow.gif)
 
@@ -96,6 +96,26 @@ python -m curve_extractor
 ```
 
 安装后命令行入口是 `curve-extractor-cli`。模块形式始终可用：`python -m curve_extractor.cli`。
+
+### Windows 可执行文件（0.2.0）
+
+不必先装 Python 也能开 GUI。把 `CurveExtractor.exe` 所在文件夹**整份**拷走，双击 exe。`_internal` 目录必须留在 exe 旁边。
+
+**Tesseract 不打进 exe。** 轴刻度 OCR 仍要单独安装；没装时窗口上方会提示把 `tesseract.exe` 加入 `PATH`，或设置 `TESSERACT_CMD`。exe 不会假装已经能读刻度。没装也能手动框图、填范围、提曲线。
+
+从源码打包（仓库根目录）：
+
+```bat
+scripts\build_windows.bat
+```
+
+产物目录：`E:\tool\CurveExtractor-0.2.0\`（`CurveExtractor.exe` + `README-Windows.txt`）。
+
+命令行提取仍是 Python 模块，不是这个 exe：
+
+```bash
+python -m curve_extractor.cli examples/sample_rgb_plot.png --output extracted.csv
+```
 
 ### Windows：Tesseract PATH
 
@@ -210,7 +230,7 @@ docs/images/ README 配图
 tests/
 ```
 
-包名（`pyproject.toml`）：`curve-extractor` 0.1.0。入口：`curve-extractor`（GUI）、`curve-extractor-cli`（CLI）。
+包名（`pyproject.toml`）：`curve-extractor` 0.2.0。入口：`curve-extractor`（GUI）、`curve-extractor-cli`（CLI）。Windows 窗口版 exe：`scripts\build_windows.bat` → `CurveExtractor.exe`。Tesseract 单独安装。
 
 ---
 

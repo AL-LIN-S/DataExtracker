@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "curve-extractor"
-version = "0.1.0"
+version = "0.2.0"
 description = "Extract numeric data from colored engineering plot images and DOCX reports"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -27,10 +27,16 @@ dependencies = [
 dev = [
     "pytest>=8.0",
 ]
+packaging = [
+    "pyinstaller>=6.11",
+]
 
 [project.scripts]
 curve-extractor = "curve_extractor.app.main_window:run"
 curve-extractor-cli = "curve_extractor.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["curve_extractor*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

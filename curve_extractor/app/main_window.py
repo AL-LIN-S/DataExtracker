@@ -28,9 +28,14 @@ try:
 except ImportError as exc:  # pragma: no cover - exercised when launching GUI without dependencies.
     raise RuntimeError("PySide6 is required for the desktop GUI. Install with: pip install PySide6") from exc
 
+from curve_extractor import __version__
 from curve_extractor.app.image_io import load_image_rgb
 from curve_extractor.app.image_view import ImageView, pixmap_from_rgb
-from curve_extractor.core.auto_calibration import auto_calibrate_from_ocr, run_tesseract_ocr
+from curve_extractor.core.auto_calibration import (
+    auto_calibrate_from_ocr,
+    first_run_tesseract_banner,
+    run_tesseract_ocr,
+)
 from curve_extractor.core.calibration import PlotCalibration, YAxisConfig
 from curve_extractor.core.color_cluster import ColorCandidate, find_color_candidates
 from curve_extractor.core.extraction import ExtractionResult, SeriesConfig, extract_series
@@ -40,7 +45,7 @@ from curve_extractor.core.export import export_csv
 class MainWindow(QMainWindow):
     def __init__(self) -> None:
         super().__init__()
-        self.setWindowTitle("彩色曲线图数据提取")
+        self.setWindowTitle(f"彩色曲线图数据提取  {__version__}")
         self.resize(1180, 760)
         self.image_rgb: np.ndarray | None = None
         self.image_path: Path | None = None
@@ -54,14 +59,32 @@ class MainWindow(QMainWindow):
 
     def _build_ui(self) -> None:
         central = QWidget()
-        layout = QHBoxLayout(central)
+        root = QVBoxLayout(central)
+        self.tesseract_banner = QLabel()
+        self.tesseract_banner.setObjectName("tesseractBanner")
+        self.tesseract_banner.setWordWrap(True)
+        self.tesseract_banner.setStyleSheet(
+            "#tesseractBanner { background: #fff4cc; color: #5c4b00; "
+            "border: 1px solid #e0c36a; padding: 8px 10px; }"
+        )
+        banner = first_run_tesseract_banner()
+        if banner:
+            self.tesseract_banner.setText(banner)
+        else:
+            self.tesseract_banner.hide()
+        body = QHBoxLayout()
         self.image_view = ImageView()
         self.image_view.point_selected.connect(self._handle_point_selected)
         self.image_view.rectangle_selected.connect(self._handle_rectangle_selected)
-        layout.addWidget(self.image_view, 2)
-        layout.addWidget(self._build_controls(), 1)
+        body.addWidget(self.image_view, 2)
+        body.addWidget(self._build_controls(), 1)
+        root.addWidget(self.tesseract_banner)
+        root.addLayout(body, 1)
         self.setCentralWidget(central)
-        self.statusBar().showMessage("导入图片后开始校准")
+        if banner:
+            self.statusBar().showMessage("未检测到 Tesseract：轴 OCR 不可用。可手动校准后提取。")
+        else:
+            self.statusBar().showMessage("导入图片后开始校准")
 
     def _build_controls(self) -> QWidget:
         panel = QWidget()
@@ -255,7 +278,9 @@ class MainWindow(QMainWindow):
             QMessageBox.warning(
                 self,
                 "自动识别失败",
-                f"{exc}\n\n请安装 Tesseract OCR 后重试，或继续使用手动校准。",
+                f"{exc}\n\n请安装 Tesseract OCR，并把 tesseract.exe 加入 PATH，"
+                "或设置 TESSERACT_CMD。也可继续手动点选图区并填写坐标范围。"
+                "Tesseract 只读轴刻度，不是识曲线。",
             )
             return
         calibration = result.calibration
@@ -467,6 +492,8 @@ class MainWindow(QMainWindow):
 
 def run() -> int:
     app = QApplication([])
+    app.setApplicationName("Curve Extractor")
+    app.setApplicationVersion(__version__)
     window = MainWindow()
     window.show()
     return app.exec()
