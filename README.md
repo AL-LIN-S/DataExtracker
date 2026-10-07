@@ -2,6 +2,13 @@
   <img src="docs/images/hero-xhs.png" alt="没有原始数据 / 只有一张图 / 5 步导成 CSV" width="920">
 </p>
 
+### 🎬 Demo video · 演示视频
+
+[![Curve Extractor motion demo](docs/media/motion-preview.gif)](https://github.com/AL-LIN-S/DataExtracker/releases/download/v0.2.0/DataExtracker-motion.mp4)
+
+▶ [Watch the 40 s 1080p video (MP4)](https://github.com/AL-LIN-S/DataExtracker/releases/download/v0.2.0/DataExtracker-motion.mp4) · [Download v0.2.0](https://github.com/AL-LIN-S/DataExtracker/releases/tag/v0.2.0)
+
+
 <p align="center">
   <code>本地</code>&nbsp;·&nbsp;<code>开源</code>&nbsp;·&nbsp;<code>不上传</code>&nbsp;·&nbsp;<code>MIT</code>
   <br><br>
