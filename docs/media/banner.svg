@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 400" width="1280" height="400" role="img" aria-label="Curve Extractor: turn colored plot images into a clean, wide CSV">
+  <defs>
+    <linearGradient id="botbody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#e2e8f0"/></linearGradient>
+    <radialGradient id="tint" cx="85%" cy="20%" r="60%"><stop offset="0" stop-color="#cffafe" stop-opacity=".9"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></radialGradient>
+    <radialGradient id="tint2" cx="10%" cy="90%" r="45%"><stop offset="0" stop-color="#e0f2fe" stop-opacity=".9"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></radialGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#0f172a" stroke-opacity=".05"/></pattern>
+    <linearGradient id="acc" x1="0" x2="1"><stop offset="0" stop-color="#0891b2"/><stop offset="1" stop-color="#06b6d4"/></linearGradient>
+    <filter id="card" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#0f172a" flood-opacity=".14"/></filter>
+    <clipPath id="r"><rect width="1280" height="400" rx="24"/></clipPath>
+  </defs>
+  <g clip-path="url(#r)">
+    <rect width="1280" height="400" fill="#ffffff"/>
+    <rect width="1280" height="400" fill="url(#tint)"/>
+    <rect width="1280" height="400" fill="url(#tint2)"/>
+    <rect width="1280" height="400" fill="url(#grid)"/>
+  </g>
+  <rect x="1" y="1" width="1278" height="398" rx="23" fill="none" stroke="#e2e8f0" stroke-width="2"/>
+  <g transform="translate(150 215) scale(1.05)">
+    <animateTransform attributeName="transform" type="translate" additive="sum" values="0 0;0 -8;0 0" dur="2.4s" repeatCount="indefinite"/>
+    <g id="bot">
+  <ellipse cx="0" cy="92" rx="64" ry="10" fill="#0f172a" opacity=".12"/>
+  <line x1="-72" y1="8" x2="-94" y2="38" stroke="#0f172a" stroke-width="13" stroke-linecap="round"/>
+  <circle cx="-94" cy="38" r="14" fill="#ffffff" stroke="#0f172a" stroke-width="4.5"/>
+  <g><animateTransform attributeName="transform" type="rotate" values="0 72 8;-12 72 8;0 72 8" dur="1.6s" repeatCount="indefinite"/>
+    <line x1="72" y1="8" x2="112" y2="-62" stroke="#0f172a" stroke-width="13" stroke-linecap="round"/>
+    <circle cx="112" cy="-62" r="14" fill="#ffffff" stroke="#0f172a" stroke-width="4.5"/></g>
+  <line x1="0" y1="-64" x2="0" y2="-96" stroke="#0f172a" stroke-width="6"/>
+  <circle cx="0" cy="-101" r="18" fill="#22d3ee" opacity=".3"><animate attributeName="opacity" values=".12;.45;.12" dur="1.3s" repeatCount="indefinite"/></circle>
+  <circle cx="0" cy="-101" r="10" fill="#06b6d4" stroke="#0f172a" stroke-width="3"/>
+  <rect x="-46" y="60" width="31" height="22" rx="9" fill="#0f172a"/><rect x="15" y="60" width="31" height="22" rx="9" fill="#0f172a"/>
+  <rect x="-78" y="-66" width="156" height="132" rx="46" fill="url(#botbody)" stroke="#0f172a" stroke-width="5"/>
+  <path d="M-52 -50 Q-30 -60 0 -60" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" opacity=".9"/>
+  <rect x="-57" y="-46" width="114" height="72" rx="28" fill="#0f172a"/>
+  <g fill="#22d3ee">
+    <ellipse cx="-23" cy="-12" rx="9" ry="13"><animate attributeName="ry" values="13;13;1.5;13" keyTimes="0;.94;.97;1" dur="3.3s" repeatCount="indefinite"/></ellipse>
+    <ellipse cx="23" cy="-12" rx="9" ry="13"><animate attributeName="ry" values="13;13;1.5;13" keyTimes="0;.94;.97;1" dur="3.3s" repeatCount="indefinite"/></ellipse>
+  </g>
+  <path d="M-12 6 Q0 18 12 6" fill="none" stroke="#22d3ee" stroke-width="4" stroke-linecap="round"/>
+  <ellipse cx="-40" cy="9" rx="9" ry="5" fill="#fb7185" opacity=".75"/><ellipse cx="40" cy="9" rx="9" ry="5" fill="#fb7185" opacity=".75"/>
+</g>
+  </g>
+  <g font-family="'Segoe UI','Helvetica Neue',Arial,sans-serif">
+    <text x="300" y="150" font-size="21" font-weight="700" fill="#0891b2" letter-spacing="5">OPEN-SOURCE · LOCAL · MIT</text>
+    <text x="297" y="222" font-size="70" font-weight="800" fill="#0f172a">Curve <tspan fill="url(#acc)">Extractor</tspan></text>
+    <text x="300" y="270" font-size="27" fill="#334155">Colored plot image <tspan fill="#0891b2" font-weight="700">→</tspan> clean, wide CSV</text>
+    <text x="300" y="312" font-size="22" fill="#64748b" font-family="'Noto Sans CJK SC','Microsoft YaHei','PingFang SC',sans-serif">把论文里的彩色曲线图，变回可用的数据</text>
+  </g>
+  <g transform="translate(905 64)">
+    <rect width="320" height="250" rx="16" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5" filter="url(#card)"/>
+    <g stroke="#eef2f7" stroke-width="1"><path d="M40 30V210M100 30V210M160 30V210M220 30V210M280 30V210M40 30H290M40 90H290M40 150H290"/></g>
+    <path d="M40 210H290M40 30V210" stroke="#334155" stroke-width="2" fill="none"/>
+    <g fill="none" stroke-width="4" stroke-linecap="round" stroke-dasharray="420" stroke-dashoffset="0">
+      <path d="M40 190 C90 180 110 80 160 90 S240 60 290 50" stroke="#ef4444"><animate attributeName="stroke-dashoffset" from="420" to="0" begin="0s" dur="1.6s" fill="freeze"/></path>
+      <path d="M40 160 C100 150 130 170 170 130 S250 120 290 110" stroke="#22c55e"><animate attributeName="stroke-dashoffset" from="420" to="0" begin="0.5s" dur="1.6s" fill="freeze"/></path>
+      <path d="M40 120 C80 140 120 190 170 180 S250 160 290 170" stroke="#3b82f6"><animate attributeName="stroke-dashoffset" from="420" to="0" begin="1s" dur="1.6s" fill="freeze"/></path>
+    </g>
+    <rect x="0" y="8" width="4" height="234" rx="2" fill="#06b6d4" opacity=".55"><animate attributeName="x" values="2;314;2" dur="4s" repeatCount="indefinite"/></rect>
+    <g transform="translate(22 196)" font-family="Consolas,'JetBrains Mono',monospace" font-size="13">
+      <rect x="0" y="0" width="312" height="78" rx="10" fill="#f8fafc" stroke="#06b6d4" stroke-opacity=".7" filter="url(#card)"/>
+      <text x="12" y="22" fill="#0891b2" font-weight="700">x,red_series,green_series,blue_series</text>
+      <text x="12" y="44" fill="#334155">0.0000,50.0000,65.0000,20.0000</text>
+      <text x="12" y="66" fill="#334155">0.2000,55.9601,64.6807,23.3642</text>
+    </g>
+  </g>
+</svg>

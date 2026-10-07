@@ -1,191 +1,239 @@
-<p align="center">
-  <img src="docs/images/hero-xhs.png" alt="没有原始数据 / 只有一张图 / 5 步导成 CSV" width="920">
-</p>
+<a id="english"></a>
 
-### 🎬 Demo video · 演示视频
+<div align="center">
 
-[![Curve Extractor motion demo](docs/media/motion-preview.gif)](https://github.com/AL-LIN-S/DataExtracker/releases/download/v0.2.0/DataExtracker-motion.mp4)
+<img src="docs/media/banner.svg" alt="Curve Extractor: turn colored plot images into a clean, wide CSV" width="100%">
 
-▶ [Watch the 53 s 1080p video with voiceover (MP4)](https://github.com/AL-LIN-S/DataExtracker/releases/download/v0.2.0/DataExtracker-motion.mp4) · [Download v0.2.0](https://github.com/AL-LIN-S/DataExtracker/releases/tag/v0.2.0)
+<br>
 
+**Got a colored plot, but no raw data? Get a CSV back from the plot itself, entirely on your own machine.**
 
-<p align="center">
-  <code>本地</code>&nbsp;·&nbsp;<code>开源</code>&nbsp;·&nbsp;<code>不上传</code>&nbsp;·&nbsp;<code>MIT</code>
-  <br><br>
-  <a href="#中文">中文</a> · <a href="#english">English</a>
-  <br><br>
-  <img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-yellow">
-  <img alt="Python 3.10+" src="https://img.shields.io/badge/python-3.10%2B-blue">
-  <img alt="curve-extractor 0.1.0" src="https://img.shields.io/badge/curve--extractor-0.1.0-informational">
-</p>
+[![Release](https://img.shields.io/github/v/release/AL-LIN-S/DataExtracker?color=0891b2&labelColor=e2e8f0&logoColor=0f172a&logo=github)](https://github.com/AL-LIN-S/DataExtracker/releases/latest)
+[![License: MIT](https://img.shields.io/badge/license-MIT-0891b2?labelColor=e2e8f0&logoColor=0f172a)](LICENSE)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-0891b2?labelColor=e2e8f0&logo=python&logoColor=0f172a)](pyproject.toml)
+[![Platforms](https://img.shields.io/badge/platform-Windows%20exe%20%7C%20Python%20(Win%2FmacOS%2FLinux)-0891b2?labelColor=e2e8f0&logoColor=0f172a)](#-quick-start)
+[![Stars](https://img.shields.io/github/stars/AL-LIN-S/DataExtracker?style=flat&color=0891b2&labelColor=e2e8f0&logoColor=0f172a&logo=github)](https://github.com/AL-LIN-S/DataExtracker/stargazers)
 
-<a id="中文"></a>
+[**Download for Windows**](https://github.com/AL-LIN-S/DataExtracker/releases/latest) ·
+[Quick start](#-quick-start) ·
+[How it works](#-how-it-works) ·
+[FAQ](#-faq) ·
+[**中文说明**](README.zh-CN.md)
 
-# 没有原始数据。只有一张图。5 步导成 CSV。
-
-想对比文献里那条曲线，文章却只给了图。网页描点，一条线做一次还行——同一周第五次对着图点，那不叫工作流。
-
-这页就是把扫描件 / 截图里的**彩色工程曲线**，在自己电脑上提成宽表 CSV 的教程。包名 `curve-extractor` 0.1.0。图不上传。不准 100%。
-
-![从曲线图到 CSV](docs/images/demo_flow.gif)
+</div>
 
 ---
 
-## 5 步
+## 🎬 Demo
 
-| ① 选图 | ⑤ 叠图复核 | 并排对照 |
-|:---:|:---:|:---:|
-| ![原图](docs/images/01_input_plot.png) | ![叠图](docs/images/02_overlay_preview.png) | ![并排](docs/images/03_side_by_side.png) |
+<div align="center">
 
-### ① 选图
+[<img src="docs/media/demo-poster.png" alt="Curve Extractor motion demo: click to watch the 53 s video" width="880">](https://github.com/AL-LIN-S/DataExtracker/releases/download/v0.2.0/DataExtracker-motion.mp4)
 
-白底、彩色曲线、线性坐标最稳。用 [`examples/`](examples/) 里的合成样例练手即可，自己的项目图别往外传。
+▶ [Watch the 53 s 1080p video with voiceover (MP4)](https://github.com/AL-LIN-S/DataExtracker/releases/download/v0.2.0/DataExtracker-motion.mp4)
 
-### ② 定两轴各两点
+</div>
 
-X、Y 各落到两个已知刻度，把像素换成真实坐标。轴刻度可以自动读——**Tesseract 只认刻度数字，不是「AI 识曲线」**。读不准就手动框图区，手填 x/y 范围，照样能往下走。
+## 😩 Why
 
-Windows 上轴 OCR 失败，多半是 Tesseract 没进 `PATH`：
+You want to compare against a curve from a paper or report, but all you have is **the image**.
+Clicking points one by one in a web digitizer works once. By the fifth plot of the week, it's no longer a workflow.
 
-![Windows 第一次跑通](docs/images/04_windows_first_run.png)
+But many engineering plots already **draw each curve in its own bright color**.
+Curve Extractor uses that: it separates the traces by color, maps pixels to axis values, and writes a wide CSV. Then it lets you **overlay the result on the original** so you can see whether to trust it.
 
-### ③ 识别颜色
+## ✨ Features
 
-曲线按饱和彩色像素提，不是按鼠标一条条描。红 / 绿 / 蓝可以一起做。自动绑色是启发式的，绑错了看叠图，别装没看见。
+| | Feature | What it actually does |
+|:-:|---|---|
+| 🎨 | **Color-based extraction** | Finds saturated color candidates in the plot area and extracts each trace by RGB + tolerance. No click-tracing. |
+| 🔢 | **Axis OCR (tick labels only)** | Tesseract reads the axis **tick numbers** to calibrate automatically. It does not "AI-read" the curve. |
+| ✋ | **Manual fallback** | OCR missed? Pick the plot's top-left / bottom-right in the GUI and type the X/Y ranges. |
+| 📐 | **Multiple Y axes** | Bind each series to `left_1`, `right_1`, … with its own min/max. |
+| 🤖 | **Auto-binding** | Heuristically binds red / green / blue candidates to series; override with `--series` or in the GUI. |
+| 🚫 | **Exclusion regions** | Box out legends, labels or annotations before extracting (GUI). |
+| 📄 | **Wide CSV** | `x` plus one column per series (`name_unit`); blanks where a trace is missing. Opens in Excel or pandas. |
+| 🔍 | **Overlay check** | GUI preview on the original. DOCX batch also writes `_overlay`, `_side_by_side`, `_color_fit` images and `_metrics.csv`. |
+| 📚 | **DOCX batch** | Processes reports laid out as `Pic n:` / `Statement n:`; skips table-like images and checks results against statement text. |
+| 🔒 | **Local & offline** | A desktop tool, not a web app. Your plots never leave your machine. MIT licensed. |
 
-### ④ 导出 CSV
+## 🚀 Quick start
 
-宽表，一列一条曲线（`x`，后面每一列一条）。能进 Excel，也能给 Python。缺测留空。
+### Option A: Windows app (no Python needed)
 
-单图 CLI **只写出你指定的 CSV**。叠图复核走 **GUI**；DOCX 批量每张会另写 overlay / 并排图。
+1. Download **`CurveExtractor-0.2.0-windows-x64.zip`** from the [latest release](https://github.com/AL-LIN-S/DataExtracker/releases/latest).
+2. Unzip it and keep the `_internal` folder next to `CurveExtractor.exe`, then double-click the exe.
+3. *(Optional, for automatic axis reading)* install [Tesseract for Windows](https://github.com/UB-Mannheim/tesseract/wiki) and add it to `PATH`, or set:
 
-### ⑤ 叠图复核
+   ```powershell
+   $env:TESSERACT_CMD = "C:\Program Files\Tesseract-OCR\tesseract.exe"
+   ```
 
-把提取结果叠回原图。重合再往下用；飞了就改图区、改范围、改颜色，再导一次。没有叠图核对的数，不要丢进论文。
+   Tesseract is **not bundled**. Without it, you can still box the plot, type the ranges, extract and export.
 
----
-
-## 会翻车（先看再装）
-
-> **线性轴 only。** 对数轴不做。  
-> **白底彩线最稳。** 深色底、灰度扫描、同色缠绕会翻车。  
-> **Tesseract = 轴刻度 OCR**，不是 AI 识曲线。  
-> **不准 100%。** 像素量化、轴标定、绑色都会有误差。只信叠回去重合的结果。
-
-还支持：多 Y 轴（自动或手动）、DOCX 按 `Pic n` / `Statement n` 批量。不是网页版，没有在线地址。
-
----
-
-## 30 秒试跑
-
-Python 3.10+。轴自动识别另装 Tesseract。在仓库根目录：
+### Option B: from source (Python 3.10+)
 
 ```bash
+git clone https://github.com/AL-LIN-S/DataExtracker.git
+cd DataExtracker
 python -m venv .venv
-# Windows PowerShell: .\.venv\Scripts\Activate.ps1
-source .venv/bin/activate
-
+source .venv/bin/activate          # Windows PowerShell: .\.venv\Scripts\Activate.ps1
 python -m pip install -U pip
 python -m pip install -e .
-python -m curve_extractor.cli examples/sample_rgb_plot.png --output extracted.csv
 ```
 
-打开 GUI：
-
-```bash
-python -m curve_extractor
-# 或：curve-extractor
-```
-
-安装后 CLI 入口也可以是 `curve-extractor-cli`。
-
-### Windows：Tesseract PATH
-
-1. 安装 Python 3.10+。
-2. 安装 [Windows 版 Tesseract](https://github.com/UB-Mannheim/tesseract/wiki)，把 `tesseract.exe` 加进 `PATH`，或：
-
-```powershell
-$env:TESSERACT_CMD = "C:\Program Files\Tesseract-OCR\tesseract.exe"
-```
-
-3. `python -m pip install -e .`
-4. GUI：`python -m curve_extractor`。OCR 不准时手动框选图区、改坐标范围，照样能提取。
-5. 或跑样例：`python -m curve_extractor.cli examples/sample_rgb_plot.png --output extracted.csv`
-
-| 系统 | Tesseract |
+| OS | Tesseract (for axis OCR) |
 |---|---|
-| Windows | [UB Mannheim 安装包](https://github.com/UB-Mannheim/tesseract/wiki) + `PATH` 或 `TESSERACT_CMD` |
+| Windows | [UB Mannheim installer](https://github.com/UB-Mannheim/tesseract/wiki) + `PATH` or `TESSERACT_CMD` |
 | macOS | `brew install tesseract` |
 | Linux | `sudo apt install tesseract-ocr` |
 
----
-
-## GUI 和 CLI
-
-| | GUI | 单图 CLI | DOCX 批量 |
-|---|---|---|---|
-| 入口 | `python -m curve_extractor` | `python -m curve_extractor.cli 图.png --output extracted.csv` | `python -m curve_extractor.cli 报告.docx --output-dir outputs` |
-| 定轴 | 自动 OCR，或手动框图 / 改范围 | 自动 OCR | 自动 OCR |
-| 导出 | CSV + **叠图预览** | **指定的 CSV** | 每张 `pic_NNN.csv` + overlay / 并排 / 色拟合 / metrics |
-| 适合 | 要复核、要手改 | 一张图、命令行 | `Pic n` / `Statement n` 那一摞 |
-
-手动指定曲线（自动绑定不对时）：
+**GUI**
 
 ```bash
-python -m curve_extractor.cli path/to/plot.png \
-  --output extracted.csv \
-  --series "power:MW:0,235,0:45:right_1"
+python -m curve_extractor        # or: curve-extractor
 ```
 
-`--series` 格式：`NAME:UNIT:R,G,B:TOLERANCE:Y_AXIS`
+**CLI** (installed entry point: `curve-extractor-cli`)
 
-DOCX 预期结构：
+```bash
+python -m curve_extractor.cli examples/sample_rgb_plot.png --output extracted.csv
+```
+
+## 🧪 Usage examples
+
+```bash
+# 1) Single image: auto axis OCR + auto color binding -> one CSV
+python -m curve_extractor.cli examples/sample_rgb_plot.png --output extracted.csv
+
+# 2) Bind series yourself when auto-binding picks the wrong colors
+#    format: NAME:UNIT:R,G,B:TOLERANCE:Y_AXIS   (repeat --series per curve)
+python -m curve_extractor.cli path/to/plot.png --output extracted.csv \
+  --series "frequency:Hz:235,0,0:45:left_1" \
+  --series "power:MW:0,235,0:45:right_1"
+
+# 3) Print more color candidates (default 6)
+python -m curve_extractor.cli path/to/plot.png --max-colors 10
+
+# 4) DOCX batch: every "Pic n" plot -> CSV + overlay/side-by-side/color-fit/metrics
+python -m curve_extractor.cli report.docx --output-dir outputs
+```
+
+The single-image CLI prints the detected plot area, X range, Y axes, color candidates and bindings, then writes **only the CSV you asked for**.
+DOCX batch mode writes `pic_NNN.csv` plus review images per picture, and `batch_summary.csv` / `batch_summary.txt`. It exits with code `2` if any picture failed.
+
+<details>
+<summary><b>Expected DOCX layout</b></summary>
 
 ```text
 Pic 1:
-[曲线图]
+[plot image]
 Statement 1:
-[可选校验文字]
+[optional text used for validation]
 
 Pic 2:
-[曲线图]
-[可选表格图]
+[plot image]
+[optional table image]
 Statement 2:
-[可选校验文字]
+[optional text]
 ```
 
-表格类图片当作说明 / 校验输入，不当曲线图。CSV 宽表形如 `x,frequency_Hz,power_MW,...`。
+Table-like images are treated as statement / validation input, not as plots.
+</details>
 
-更完整的中文说明（GUI 逐步、输出文件、测试）：[README.zh-CN.md](README.zh-CN.md)
+## 🧠 How it works
+
+```mermaid
+flowchart LR
+    A["🖼️ Plot image<br/>or DOCX"] --> B["🔢 Calibrate axes<br/>Tesseract tick OCR<br/>or manual box + ranges"]
+    B --> C["🎨 Color candidates<br/>in plot area"]
+    C --> D["🤖 Bind series<br/>auto R/G/B or --series"]
+    D --> E["📈 Extract per column<br/>color mask, drop jumps,<br/>fill short gaps"]
+    E --> F["📄 Wide CSV<br/>x, name_unit, …"]
+    E --> G["🔍 Overlay check<br/>overlay · side-by-side<br/>color-fit · metrics"]
+```
+
+## 🎯 Accuracy & the overlay check
+
+| Original plot | Extracted curves overlaid | Side by side |
+|:-:|:-:|:-:|
+| ![input](docs/images/01_input_plot.png) | ![overlay](docs/images/02_overlay_preview.png) | ![side by side](docs/images/03_side_by_side.png) |
+
+Pixel quantization, axis calibration and color binding all add error, so **results are not 100% accurate**.
+Use the overlay: if the extracted line sits on the original trace, use the numbers. If it doesn't, fix the plot box, ranges or colors and export again.
+In DOCX batch mode, `_metrics.csv` reports per series `source_coverage_fraction`, `path_on_source_fraction` and `missing_fraction` so you can spot bad extractions without opening every image.
+
+**Works best:** white background · saturated colored lines · linear axes.
+**Will struggle:** log axes (not supported) · dark backgrounds · grayscale scans · same-color tangled curves.
+
+## ❓ FAQ
+
+<details><summary><b>Is this a web app? Are my images uploaded?</b></summary>
+No. It's a local desktop / command-line tool. Nothing is uploaded.
+</details>
+
+<details><summary><b>Do I need Tesseract?</b></summary>
+Only for <b>automatic</b> axis calibration (it reads tick numbers). In the GUI you can always pick the plot corners and type the ranges by hand. The single-image CLI relies on OCR, so it needs Tesseract.
+</details>
+
+<details><summary><b>Does it support log axes or grayscale plots?</b></summary>
+Not currently. Axes are linear, and series are separated by color.
+</details>
+
+<details><summary><b>The colors were bound to the wrong series.</b></summary>
+Auto-binding is heuristic. Use <code>--series NAME:UNIT:R,G,B:TOLERANCE:Y_AXIS</code> on the CLI, or add/edit series in the GUI's color table, then re-check the overlay.
+</details>
+
+<details><summary><b>What language is the GUI in?</b></summary>
+The GUI labels are currently in Chinese (导入图片, 自动识别坐标轴, 识别候选颜色, 提取并预览, 导出 CSV …). The flow follows the same five steps described above.
+</details>
+
+<details><summary><b>Windows says Tesseract was not found.</b></summary>
+Add <code>tesseract.exe</code> to <code>PATH</code> or set <code>TESSERACT_CMD</code> to its full path, then restart the app or terminal.
+<br><img src="docs/images/04_windows_first_run.png" alt="Windows first run" width="420">
+</details>
+
+## 🗺️ Roadmap
+
+Ideas, none of them promised yet. Feedback and PRs are welcome:
+
+- [x] Windows one-folder GUI build (v0.2.0 release)
+- [ ] Merge the v0.2 Windows build branch into `main`
+- [ ] Log-scale axes
+- [ ] Better handling of dark backgrounds and grayscale / line-style series
+- [ ] English GUI labels
+- [ ] Publish to PyPI
+
+## 🤝 Contributing
+
+Issues and pull requests are welcome. Please include a **synthetic or shareable** plot if you report an extraction problem, and don't post confidential project figures.
+
+```bash
+python -m pip install -e ".[dev]"
+python -m pytest -q
+```
+
+## 📜 License
+
+[MIT](LICENSE) © Curve Extractor contributors
+
+## ⭐ Star history
+
+<a href="https://star-history.com/#AL-LIN-S/DataExtracker&Date">
+  <img src="https://api.star-history.com/svg?repos=AL-LIN-S/DataExtracker&type=Date" alt="Star history chart" width="600">
+</a>
 
 ---
 
-<a id="english"></a>
+<a id="中文"></a>
 
-## English
+## 🇨🇳 中文速览
 
-**No raw data. Only a plot. Five steps to a CSV.**
+**没有原始数据，只有一张图？** Curve Extractor 在你自己的电脑上，把彩色曲线图按颜色拆开、按坐标轴换算，导出宽表 CSV，再把结果叠回原图让你核对。
 
-Curve Extractor (`curve-extractor` 0.1.0) digitizes colored engineering plots into a wide CSV — locally, MIT, nothing uploaded. It is not a web app and it is not 100% accurate.
+- **Windows：** 到 [Releases](https://github.com/AL-LIN-S/DataExtracker/releases/latest) 下载 `CurveExtractor-0.2.0-windows-x64.zip`，解压后双击 `CurveExtractor.exe`（`_internal` 文件夹要和 exe 放在一起）。
+- **源码：** `python -m pip install -e .`，然后 GUI 用 `python -m curve_extractor`，命令行用 `python -m curve_extractor.cli 图.png --output extracted.csv`。
+- **Tesseract 只用来读坐标轴刻度数字**，不是"AI 识曲线"，需要另外安装。没装也可以在 GUI 里手动框图区、填范围。
+- **适用：** 白底、彩色曲线、线性坐标。对数轴、深色底、灰度图暂不支持。**结果不是 100% 准确，用之前一定要看叠图。**
 
-**Five steps:** pick a plot → pin two points on each axis → detect colors → export CSV → overlay-check.
-
-1. **Pick a plot.** White background, colored traces, linear axes. Dark backgrounds, grayscale scans, and log axes fail. Synthetic samples live in [`examples/`](examples/).
-2. **Two points per axis.** Map pixels to real coordinates. Tesseract OCRs **tick labels only** — it does not “AI-read the curve.” If OCR misses, box the plot area and type the ranges.
-3. **Detect colors.** Saturated color pixels, not click-tracing. R/G/B can run together. Auto-binding is heuristic; trust the overlay.
-4. **Export CSV.** Wide table, one column per series, blanks for missing samples. Single-image CLI writes **only the CSV you asked for**. Overlay review is in the **GUI**; DOCX batch also writes overlay / side-by-side files per picture.
-5. **Overlay-check.** If it doesn’t sit on the original trace, fix the plot box, ranges, or colors and export again. Don’t put an unchecked CSV in a paper.
-
-**Will fail:** linear axes only; white + colored lines work best; dark / log / same-color tangles crash; no 100% accuracy.
-
-**30-second try** (Python 3.10+; Tesseract separately for axis OCR):
-
-```bash
-python -m pip install -e .
-python -m curve_extractor.cli examples/sample_rgb_plot.png --output extracted.csv
-python -m curve_extractor   # GUI
-```
-
-Windows Tesseract: [UB Mannheim](https://github.com/UB-Mannheim/tesseract/wiki) then `$env:TESSERACT_CMD = "C:\Program Files\Tesseract-OCR\tesseract.exe"`.
-
-`--series` format: `NAME:UNIT:R,G,B:TOLERANCE:Y_AXIS`. DOCX batch: `--output-dir` and a `Pic n` / `Statement n` layout. License: MIT.
+完整中文教程（GUI 逐步说明、输出文件、测试）：[README.zh-CN.md](README.zh-CN.md)
