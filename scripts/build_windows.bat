@@ -8,7 +8,7 @@ REM Tesseract is NOT bundled.
 set "REPO=%~dp0.."
 for %%I in ("%REPO%") do set "REPO=%%~fI"
 
-set "PY=C:\Users\lyf\AppData\Local\Programs\Python\Python313\python.exe"
+if not defined PY set "PY=python.exe"
 if not exist "%PY%" (
   where python >nul 2>&1
   if errorlevel 1 (
