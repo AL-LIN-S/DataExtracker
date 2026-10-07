@@ -6,7 +6,7 @@
 
 [![Curve Extractor motion demo](docs/media/motion-preview.gif)](https://github.com/AL-LIN-S/DataExtracker/releases/download/v0.2.0/DataExtracker-motion.mp4)
 
-▶ [Watch the 40 s 1080p video (MP4)](https://github.com/AL-LIN-S/DataExtracker/releases/download/v0.2.0/DataExtracker-motion.mp4) · [Download v0.2.0](https://github.com/AL-LIN-S/DataExtracker/releases/tag/v0.2.0)
+▶ [Watch the 42 s 1080p video with voiceover (MP4)](https://github.com/AL-LIN-S/DataExtracker/releases/download/v0.2.0/DataExtracker-motion.mp4) · [Download v0.2.0](https://github.com/AL-LIN-S/DataExtracker/releases/tag/v0.2.0)
 
 
 <p align="center">
